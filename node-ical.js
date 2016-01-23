@@ -35,3 +35,55 @@ ical.objectHandlers['END'] = function(val, params, curr, stack){
   }
   return originalEnd.call(this, val, params, curr, stack);
 }
+
+
+function getRdateValue(dateStr) {
+  var comps = /^(\d{4})(\d{2})(\d{2})$/.exec(all[i]);
+  if (comps !== null) {
+    return new Date(
+      comps[1],
+      parseInt(comps[2], 10)-1,
+      comps[3]
+    );
+  }
+
+  var comps = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?$/.exec(all[i]);
+  if (comps !== null) {
+    if (comps[7] == 'Z') { // GMT
+      return new Date(Date.UTC(
+        parseInt(comps[1], 10),
+        parseInt(comps[2], 10)-1,
+        parseInt(comps[3], 10),
+        parseInt(comps[4], 10),
+        parseInt(comps[5], 10),
+        parseInt(comps[6], 10 )
+      ));
+    } else {
+      return new Date(
+        parseInt(comps[1], 10),
+        parseInt(comps[2], 10)-1,
+        parseInt(comps[3], 10),
+        parseInt(comps[4], 10),
+        parseInt(comps[5], 10),
+        parseInt(comps[6], 10)
+      );
+    }
+  }
+
+  return null;
+}
+
+
+ical.objectHandlers['RDATE'] = function(val, params, curr, par, line){
+  curr['rdate'] = [];
+  var convertedDate, all = val.split(',');
+
+  for(var i=0; i<all.length; i++) {
+    convertedDate = getRdateValue(dateStr);
+    if (convertedDate instanceof Date) {
+      curr['rdate'].push(convertedDate);
+    }
+  }
+
+  return curr;
+}
