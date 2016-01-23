@@ -23,22 +23,11 @@ ical.objectHandlers['RRULE'] = function(val, params, curr, stack, line){
   curr.rrule = line;
   return curr
 }
-var originalEnd = ical.objectHandlers['END'];
-ical.objectHandlers['END'] = function(val, params, curr, stack){
-  if (curr.rrule) {
-    var rule = curr.rrule.replace('RRULE:', '');
-    if (rule.indexOf('DTSTART') === -1) {
-      rule += ';DTSTART=' + curr.start.toISOString().replace(/[-:]/g, '');
-      rule = rule.replace(/\.[0-9]{3}/, '');
-    }
-    curr.rrule = rrule.fromString(rule);
-  }
-  return originalEnd.call(this, val, params, curr, stack);
-}
 
 
 function getRdateValue(dateStr) {
-  var comps = /^(\d{4})(\d{2})(\d{2})$/.exec(all[i]);
+
+  var comps = /^(\d{4})(\d{2})(\d{2})$/.exec(dateStr);
   if (comps !== null) {
     return new Date(
       comps[1],
@@ -47,7 +36,7 @@ function getRdateValue(dateStr) {
     );
   }
 
-  var comps = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?$/.exec(all[i]);
+  var comps = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?$/.exec(dateStr);
   if (comps !== null) {
     if (comps[7] == 'Z') { // GMT
       return new Date(Date.UTC(
@@ -76,10 +65,11 @@ function getRdateValue(dateStr) {
 
 ical.objectHandlers['RDATE'] = function(val, params, curr, par, line){
   curr['rdate'] = [];
-  var convertedDate, all = val.split(',');
+  var convertedDate;
+  var all = val.split(',');
 
-  for(var i=0; i<all.length; i++) {
-    convertedDate = getRdateValue(dateStr);
+  for (var i=0; i<all.length; i++) {
+    convertedDate = getRdateValue(all[i]);
     if (convertedDate instanceof Date) {
       curr['rdate'].push(convertedDate);
     }
@@ -87,3 +77,19 @@ ical.objectHandlers['RDATE'] = function(val, params, curr, par, line){
 
   return curr;
 }
+
+
+
+var originalEnd = ical.objectHandlers['END'];
+ical.objectHandlers['END'] = function(val, params, curr, stack){
+  if (curr.rrule) {
+    var rule = curr.rrule.replace('RRULE:', '');
+    if (rule.indexOf('DTSTART') === -1) {
+      rule += ';DTSTART=' + curr.start.toISOString().replace(/[-:]/g, '');
+      rule = rule.replace(/\.[0-9]{3}/, '');
+    }
+    curr.rrule = rrule.fromString(rule);
+  }
+  return originalEnd.call(this, val, params, curr, stack);
+}
+

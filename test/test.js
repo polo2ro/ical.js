@@ -363,7 +363,19 @@ vows.describe('node-ical').addBatch({
       }
     }
   },
-
+  'with test12.ics (testing RDATE)': {
+    topic: function () {
+      return ical.parseFile('./test/test12.ics');
+    },
+    'rdate in event' : {
+      topic: function(events) {
+        return _.values(events)[0];
+      }
+      , 'has rdate' : function(topic) {
+        assert.equal(topic.rdate.length, 130);
+      }
+    }
+  },
   'url request errors' : {
     topic : function () {
       ical.fromURL('http://not.exist/', {}, this.callback);
