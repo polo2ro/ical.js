@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "request": "2.40.0",
-    "rrule": "2.0.0"
+    "rrule": "git://github.com/jkbrzt/rrule.git#9a540ad5193a5df9542d569c44cb8400b3575cb8"
   },
   "devDependencies": {
     "vows": "0.7.0",

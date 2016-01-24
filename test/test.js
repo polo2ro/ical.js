@@ -374,6 +374,9 @@ vows.describe('node-ical').addBatch({
       , 'has rdate' : function(topic) {
         assert.equal(topic.rdate.length, 130);
       }
+      , 'has ruleSet' : function(topic) {
+        assert.notEqual(topic.rruleSet, undefined);
+      }
     }
   },
   'url request errors' : {
